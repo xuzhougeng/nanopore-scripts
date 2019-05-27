@@ -1,24 +1,24 @@
+#!/bin/bash 
+set -e 
+set -o pipefail
+set -u
 
-ONTREADS=/path/to/ONT/fast5/files/
-GENOME=/path/to/reference/genome/in/fasta/format.fa
+# Required
+# - minimap2
+# - samtools 
+# - pysam
+# - R
+#   - ggplot2
+
+GENOME=$1
+ONTREADS=$2
 STUB="myreads"
 
-# extract high quality reads is FASTA format.
-poretools fasta --high-quality $ONTREADS > $STUB.fa
-
-# create a LAST db of the reference genome
-lastdb genome $GENOME
-
-# align high quaklity reads to reference genome with LAST
-lastal -q 1 -a 1 -b 1 genome $STUB.fa > $STUB.fa.maf
-
-# convert the MAF to BAM with complete CIGAR (matches and mismatches)
-python maf-convert.py sam $STUB.fa.maf | \
-    samtools view -T $GENOME -bS - | \
-    samtools sort -f - $STUB.fa.bam
+# align reads to reference genome with minimap2
+minimap2 -ax map-ont -t 20  $GNOME $ONTREADS | samtools sort -@ 20 > $STUB.bam
 
 # profile the errors in the alignment
-python count-errors.py $STUB.fa.bam > $STUB.fa.bam.profile.txt 
+python count-errors.py $STUB.bam > $STUB.profile
 
 # plot the error profile with R
-Rscript plot-alignment-stats.R $STUB.fa.bam.profile.txt 
+Rscript plot-alignment-stats.R $STUB.profile

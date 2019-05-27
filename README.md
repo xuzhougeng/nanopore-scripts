@@ -1,6 +1,13 @@
-Various scripts and recipes for working with nanopore sequencing data.  
-The really useful ones will be promoted to the poretools repository: https://github.com/arq5x/poretools
+
+> This pipeline was modified from arq5x/nanopore-scripts
+
+I use this tools to assess the error profile of raw ONT reads and corrected ONT read 
 
 Dependencies:
 
-pysam 0.8.1 (for count-errors.py)
+- minimap2 
+- samtools
+- R
+  - ggplot2(for plot-alignment-stats.R)
+- python 2.7
+  - pysam 0.8.1 (for count-errors.py)

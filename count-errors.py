@@ -64,18 +64,19 @@ for read in bam:
 
 # Pass 2:
 # Report the alignment and error profile for each read's best alignment
-print '\t'.join(['query', 'read_type', 'read_len', 'align_len', 'unalign_len', 'matches', 
+# remove the read_type in the ouput
+print '\t'.join(['query', 'read_len', 'align_len', 'unalign_len', 'matches', 
 	'mismatches', 'insertions', 'deletions', 'tot_errors'])
 for query in best_align:
-	read_type = query.split('_')[4]
 	alen = best_align[query][0]
 	inferred_length = best_align[query][1]
 	cigar_prof = best_align[query][2]
 	total_errors = get_total_differences(cigar_prof)
 	unaligned_len = get_total_unaligned(cigar_prof)
-   	print '\t'.join(str(s) for s in [query, read_type, inferred_length, alen, 
+        # use MATCH  rather than EQUAL
+   	print '\t'.join(str(s) for s in [query, inferred_length, alen, 
    		unaligned_len, \
-	   	cigar_prof[EQUAL], \
+	   	cigar_prof[MATCH], \
 	   	cigar_prof[DIFF], \
 	   	cigar_prof[INS], \
 	   	cigar_prof[DEL], \
